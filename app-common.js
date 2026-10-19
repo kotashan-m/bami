@@ -140,7 +140,7 @@
       if (CFG.options.indexOf(values[i]) < 0) return "すべての項目を選択してください。";
     }
     if (new Set(values).size !== 4) {
-      return "第1〜3希望と「手に入れたくないもの」は、それぞれ違う選択肢を選んでください。";
+      return "希望バミ・第2希望・第3希望・嫌なバミは、それぞれ違う選択肢を選んでください。";
     }
     return null;
   }

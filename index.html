@@ -21,7 +21,6 @@ body{font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",Meiryo,system-ui,
 @media (prefers-reduced-motion:reduce){.bgpattern{animation:none}}
 main{max-width:560px;margin:0 auto;padding:28px 16px 48px}
 h1{font-size:1.5rem;margin:0 0 4px;letter-spacing:.05em;font-weight:700;text-align:center}
-h1::after{content:"♡";color:var(--accent);margin-left:.35em}
 .sub{color:var(--sub);font-size:.95rem;margin:0 0 22px;letter-spacing:.14em;text-align:center}
 .setup-warn{
   background:#fff8e6;border:1px solid #eedc9a;color:#8a6d2f;border-radius:14px;
@@ -72,8 +71,6 @@ button.fix{
 }
 button.fix:hover{background:var(--hover)}
 footer{text-align:center;color:var(--sub);font-size:.8rem;padding:8px 16px 24px;letter-spacing:.15em}
-footer::before{content:"♡ ";color:var(--accent2)}
-footer::after{content:" ♡";color:var(--accent2)}
 </style>
 </head>
 <body>
@@ -81,7 +78,6 @@ footer::after{content:" ♡";color:var(--accent2)}
 <main>
   <header>
     <h1>ポジション希望調査</h1>
-    <p class="sub">あぐり</p>
   </header>
 
   <div class="setup-warn" id="setupWarn" hidden>
@@ -89,7 +85,7 @@ footer::after{content:" ♡";color:var(--accent2)}
   </div>
 
   <div class="panel">
-    <p class="sub" style="margin-bottom:18px">第1〜3希望と、手に入れたくないものを<br>すべて選んで送信してください。</p>
+    <p class="sub" style="margin-bottom:18px">第1〜3希望のバミと、嫌なバミを<br>すべて選んで送信してください。</p>
 
     <form id="form">
       <fieldset>
@@ -97,7 +93,7 @@ footer::after{content:" ♡";color:var(--accent2)}
         <select id="name" required></select>
       </fieldset>
       <fieldset>
-        <label class="q" for="w1"><span class="tag">第1</span>いちばん入りたい(第1希望)</label>
+        <label class="q" for="w1"><span class="tag">第1</span>希望バミ</label>
         <select id="w1" required></select>
       </fieldset>
       <fieldset>
@@ -109,7 +105,7 @@ footer::after{content:" ♡";color:var(--accent2)}
         <select id="w3" required></select>
       </fieldset>
       <fieldset class="bad">
-        <label class="q" for="bad"><span class="tag">NG</span>手に入れたくないもの(第1希望)</label>
+        <label class="q" for="bad"><span class="tag">NG</span>嫌なバミ</label>
         <select id="bad" required></select>
       </fieldset>
 
@@ -131,7 +127,8 @@ footer::after{content:" ♡";color:var(--accent2)}
 <footer>ポジション希望調査</footer>
 
 <script src="config.js"></script>
-<script src="app-common.js"></script>
+<script src="config.override.js"></script>
+<script src="app-common.js?v=2"></script>
 <script>
 (function () {
   var CFG = window.WISH_CONFIG;
@@ -198,7 +195,7 @@ footer::after{content:" ♡";color:var(--accent2)}
         ['第1希望', vals.w1, false],
         ['第2希望', vals.w2, false],
         ['第3希望', vals.w3, false],
-        ['手に入れたくないもの', vals.bad, true]
+        ['嫌なバミ', vals.bad, true]
       ];
       document.getElementById('doneTable').innerHTML = rows.map(function (r2) {
         return '<tr><th>' + r2[0] + '</th><td class="' + (r2[2] ? 'bad' : '') + '">' + r2[1] + '</td></tr>';

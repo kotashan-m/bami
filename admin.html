@@ -21,7 +21,6 @@ body{font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",Meiryo,system-ui,
 @media (prefers-reduced-motion:reduce){.bgpattern{animation:none}}
 main{max-width:880px;margin:0 auto;padding:28px 16px 48px}
 h1{font-size:1.5rem;margin:0 0 4px;letter-spacing:.05em;font-weight:700}
-h1::after{content:"♡";color:var(--accent);margin-left:.35em}
 .sub{color:var(--sub);font-size:.95rem;margin:0 0 22px;letter-spacing:.14em}
 .panel{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:0 3px 12px rgba(232,116,143,.08)}
 .adminbox{border-style:dashed}
@@ -92,8 +91,6 @@ details summary{cursor:pointer;font-size:.85rem;color:var(--sub)}
 details .muted{margin-top:8px;background:var(--chip);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:.8rem;color:var(--sub);line-height:1.8}
 details .muted b{color:var(--text)}
 footer{text-align:center;color:var(--sub);font-size:.8rem;padding:8px 16px 24px;letter-spacing:.15em}
-footer::before{content:"♡ ";color:var(--accent2)}
-footer::after{content:" ♡";color:var(--accent2)}
 @media (max-width:560px){
   thead{display:none}
   tbody tr{display:block;padding:10px 12px 6px;border-bottom:1px dashed var(--border)}
@@ -108,7 +105,7 @@ footer::after{content:" ♡";color:var(--accent2)}
 <main>
   <header>
     <h1>管理</h1>
-    <p class="sub">あぐり ポジション希望調査</p>
+    <p class="sub">ポジション希望調査</p>
   </header>
 
   <div class="panel adminbox" id="loginCard">
@@ -134,7 +131,7 @@ footer::after{content:" ♡";color:var(--accent2)}
       <div class="tblwrap" style="margin-top:12px">
         <table>
           <thead>
-            <tr><th>名前</th><th>第1希望</th><th>第2希望</th><th>第3希望</th><th>手に入れたくない</th><th>更新日時</th><th></th></tr>
+            <tr><th>名前</th><th>第1希望</th><th>第2希望</th><th>第3希望</th><th>嫌なバミ</th><th>更新日時</th><th></th></tr>
           </thead>
           <tbody id="tbody"></tbody>
         </table>
@@ -158,8 +155,9 @@ footer::after{content:" ♡";color:var(--accent2)}
 <footer>ポジション希望調査</footer>
 
 <script src="config.js"></script>
-<script src="app-common.js"></script>
-<script src="optimizer.js"></script>
+<script src="config.override.js"></script>
+<script src="app-common.js?v=2"></script>
+<script src="optimizer.js?v=2"></script>
 <script>
 (function () {
   var CFG = window.WISH_CONFIG;
@@ -376,7 +374,7 @@ footer::after{content:" ♡";color:var(--accent2)}
 
   $('ruleText').innerHTML =
     '・第1希望 = <b>+' + CFG.w1Score + '点</b> / 第2希望 = <b>+' + CFG.w2Score + '点</b> / 第3希望 = <b>+' + CFG.w3Score + '点</b> / 希望圏外 = <b>0点</b><br>' +
-    '・「手に入れたくないもの」が割り当たった場合 <b>-' + CFG.badPenalty.toLocaleString() + '点</b>(事実上の絶対回避)<br>' +
+    '・「嫌なバミ」が割り当たった場合 <b>-' + CFG.badPenalty.toLocaleString() + '点</b>(事実上の絶対回避)<br>' +
     '・9つの選択肢から7人への割当て全パターン(181,440通り)を列挙し、合計スコアが最大のものを最適解とします。<br>' +
     '・優先度高モードでは、優先メンバー(' + CFG.priorityMembers.join('・') + ')のスコアを<b>' + CFG.priorityWeight + '倍</b>で評価します。<br>' +
     '・同一スコアの割当てが複数ある場合は、それらすべてを同点トップとして表示します。<br>' +
