@@ -5,7 +5,7 @@
 window.WISH_CONFIG = {
   // ---- 回答データ(CSV)を保存する「非公開」リポジトリ ----
   // 「あなたのユーザー名/リポジトリ名」の形式で指定
-  dataRepo: "YOUR-USERNAME/assignment-data",
+  dataRepo: "kotashan-m/bami-data",
 
   // CSVのファイル名とブランチ
   dataFile: "responses.csv",
@@ -14,11 +14,11 @@ window.WISH_CONFIG = {
   // ---- fine-grained パーソナルアクセストークン ----
   // 上記リポジトリのみ・権限は Contents: Read and write のみを付与したもの
   // 発行手順は README.md を参照
-  token: "github_pat_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  token: "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",
 
   // 管理者ページを開くための簡易パスワード
   // ※ 静的サイトのため完全な保護ではありません(READMEの注意を読んでください)
-  adminPassword: "admin0721",
+  adminPassword: "aguri2026",
 
   // ---- 以下はアプリの基本設定(通常は変更不要) ----
   participants: ["てっこ", "しまたん", "ゆうや", "オルサ", "としき", "かずきち", "さよな"],
