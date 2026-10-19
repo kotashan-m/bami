@@ -14,7 +14,7 @@ window.WISH_CONFIG = {
   // ---- fine-grained パーソナルアクセストークン ----
   // 上記リポジトリのみ・権限は Contents: Read and write のみを付与したもの
   // 発行手順は README.md を参照
-  token: "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",
+  token: "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",
 
   // 管理者ページを開くための簡易パスワード
   // ※ 静的サイトのため完全な保護ではありません(READMEの注意を読んでください)
