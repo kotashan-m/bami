@@ -1,0 +1,53 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: トークン注入(シークレット WISH_TOKEN を config.js へ)
+        env:
+          WISH_TOKEN: ${{ secrets.WISH_TOKEN }}
+        run: |
+          if [ -z "$WISH_TOKEN" ]; then
+            echo "::error::シークレット WISH_TOKEN が未設定です。リポジトリの Settings > Secrets and variables > Actions > New repository secret で名前 WISH_TOKEN として登録してください。"
+            exit 1
+          fi
+          python3 - <<'PYEOF'
+          import os, re
+          tok = os.environ["WISH_TOKEN"].strip()
+          p = "config.js"
+          src = open(p, encoding="utf-8").read()
+          src, n = re.subn(r'token\s*:\s*"[^"]*"', 'token: "' + tok + '"', src, count=1)
+          if n != 1:
+              raise SystemExit("config.js に token: \"...\" の行が見つかりません")
+          open(p, "w", encoding="utf-8").write(src)
+          print("config.js にトークンを注入しました(値はログに表示しません)")
+          PYEOF
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
