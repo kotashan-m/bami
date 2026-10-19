@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>自己テスト | optimizer.js</title>
+<style>
+  body { font-family: Consolas, monospace; background: #111; color: #4ade80; padding: 24px; white-space: pre-wrap; font-size: 14px; }
+  .fail { color: #f87171; font-weight: bold; }
+</style>
+</head>
+<body>
+<div id="out"></div>
+<script src="config.js"></script>
+<script src="optimizer.js"></script>
+<script>
+(function () {
+  var out = document.getElementById('out');
+  var fails = 0;
+  function log(s, isFail) {
+    if (isFail) fails++;
+    out.textContent += (isFail ? '[FAIL] ' : '[OK]   ') + s + '\n';
+  }
+
+  var CFG = window.WISH_CONFIG;
+  // server.py のテスト(test_run.py)と同じデータ・同じ重みで検証
+  var data = {
+    "てっこ":   { w1: "上1", w2: "上2", w3: "上3", bad: "下4" },
+    "しまたん": { w1: "上1", w2: "上2", w3: "下1", bad: "下3" },
+    "ゆうや":   { w1: "上1", w2: "下1", w3: "上2", bad: "下4" },
+    "オルサ":   { w1: "上2", w2: "上1", w3: "上3", bad: "0" },
+    "としき":   { w1: "0",   w2: "下1", w3: "上4", bad: "上1" },
+    "かずきち": { w1: "下1", w2: "0",   w3: "下2", bad: "上2" },
+    "さよな":   { w1: "下2", w2: "0",   w3: "下1", bad: "上4" }
+  };
+
+  var t0 = performance.now();
+  var res = window.WishOptimizer.computeResults(CFG, data);
+  var ms = Math.round(performance.now() - t0);
+  log('計算時間: ' + ms + ' ms (181,440通り)', ms > 10000);
+
+  var prio = res.modes[0], eq = res.modes[1];
+  log('優先モード score=' + prio.score + '(期待値 2900)', prio.score !== 2900);
+  log('優先モード ties=' + prio.tieCount + '(期待値 3)', prio.tieCount !== 3);
+  log('平等モード score=' + eq.score + '(期待値 520)', eq.score !== 520);
+  log('平等モード ties=' + eq.tieCount + '(期待値 4)', eq.tieCount !== 4);
+
+  res.modes.forEach(function (mode) {
+    mode.patterns.forEach(function (pat) {
+      var assign = {};
+      pat.assignment.forEach(function (m) { assign[m.person] = m.option; });
+      var opts = Object.keys(assign).map(function (p) { return assign[p]; });
+      if (new Set(opts).size !== 7) log(mode.id + ': 選択肢が重複しています', true);
+      var ng = pat.assignment.some(function (m) { return m.label.indexOf('NG') === 0; });
+      if (ng) log(mode.id + ': NG割当があります', true);
+      var lines = pat.lines.split('\n');
+      if (lines.length !== 9 || lines[0].indexOf('下4') !== 0 || lines[8].indexOf('上4') !== 0) {
+        log(mode.id + ': 出力形式が不正です', true);
+      }
+    });
+  });
+  log('全パターン: 重複なし・NG割当なし・出力形式OK(異常があれば上に表示)');
+
+  out.textContent += '\n--- 優先モード パターン1 ---\n' + prio.patterns[0].lines;
+  out.textContent += '\n--- 平等モード パターン1 ---\n' + eq.patterns[0].lines;
+  out.textContent += '\n' + (fails === 0 ? '✅ 全テスト合格' : '❌ ' + fails + ' 件不合格') + '\n';
+  document.title = fails === 0 ? 'ALL PASS' : 'FAIL';
+})();
+</script>
+</body>
+</html>

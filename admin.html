@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<title>管理 | ポジション希望調査</title>
+<style>
+:root{
+  --bg:#fdf2f6; --card:rgba(255,255,255,.5); --text:#5c4a50; --sub:#b08a95;
+  --border:#f2d6de; --accent:#e8748f; --accent2:#f7a8bc; --hover:rgba(253,240,243,.8); --chip:rgba(255,255,255,.8);
+  --err:#d64562;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+::selection{background:#f9c6d4}
+body{font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",Meiryo,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+.bgpattern{position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:url('bg.png');background-repeat:repeat;background-size:180px 180px;opacity:.16;animation:bgflow 15s linear infinite}
+@keyframes bgflow{from{background-position:0 0}to{background-position:-180px 0}}
+@media (prefers-reduced-motion:reduce){.bgpattern{animation:none}}
+main{max-width:880px;margin:0 auto;padding:28px 16px 48px}
+h1{font-size:1.5rem;margin:0 0 4px;letter-spacing:.05em;font-weight:700}
+h1::after{content:"♡";color:var(--accent);margin-left:.35em}
+.sub{color:var(--sub);font-size:.95rem;margin:0 0 22px;letter-spacing:.14em}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:16px;box-shadow:0 3px 12px rgba(232,116,143,.08)}
+.adminbox{border-style:dashed}
+.admintitle{margin:0 0 10px;font-weight:700;color:var(--accent);letter-spacing:.05em}
+.loginrow{display:flex;gap:8px}
+.loginrow input{flex:1}
+input[type=password]{
+  width:100%;padding:11px 18px;font-size:1rem;border:1.5px solid var(--border);border-radius:999px;
+  background:rgba(255,253,250,.85);color:var(--text);font-family:inherit;
+}
+input[type=password]:focus{outline:none;border-color:var(--accent2);box-shadow:0 0 0 3px rgba(247,168,188,.35)}
+.adminnote{font-size:.78rem;color:var(--sub);margin-top:12px;line-height:1.7}
+button{font-family:inherit;cursor:pointer;border:none;border-radius:999px;font-size:.9rem;padding:9px 18px}
+.adminbtn{border:1.5px solid var(--accent2);background:rgba(255,255,255,.85);color:var(--accent);white-space:nowrap}
+.adminbtn:hover{background:var(--hover)}
+.adminbtn.primary{background:linear-gradient(135deg,#f78fa7,#e8748f);color:#fff;border-color:transparent;box-shadow:0 2px 6px rgba(232,116,143,.35)}
+.adminbtn.primary:disabled{opacity:.6;cursor:default}
+.adminbtn.big{width:100%;padding:13px;font-size:1rem;font-weight:700;letter-spacing:.08em;margin-top:8px}
+.adminbtn.primary:hover{opacity:.9}
+.danger{border:1.5px solid #e5b8c4;background:rgba(255,255,255,.85);color:#c2566e;font-size:.8rem;padding:6px 12px}
+.danger:hover{background:var(--hover)}
+.pwerr{color:var(--err);font-size:.85rem;margin:8px 0 0}
+.status{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 4px}
+.count{font-size:1.9rem;font-weight:700;color:var(--accent)}
+.count small{font-size:.95rem;color:var(--sub);font-weight:400}
+.pill{display:inline-block;border-radius:999px;padding:4px 14px;font-size:.8rem;border:1px solid var(--border);background:var(--chip);color:var(--sub)}
+.pill.ok{background:var(--accent);border-color:var(--accent);color:#fff}
+.pill.yet{border-color:#e5b8c4;color:#c2566e;background:rgba(255,255,255,.7)}
+.tablewrap{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 3px 12px rgba(232,116,143,.08)}
+.tblwrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{padding:11px 14px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
+thead th{font-size:.78rem;color:#c2798d;background:#fdf0f4;border-bottom:2px solid var(--accent2);letter-spacing:.05em}
+tbody tr:hover td{background:var(--hover)}
+tbody tr:last-child td{border-bottom:none}
+td.n{font-weight:700}
+td.bad{color:var(--err);font-weight:700}
+td.dim{color:var(--sub);font-size:.8rem}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.mode{margin-top:22px;padding-top:16px;border-top:1px dashed var(--border)}
+.mode h2{font-size:1.05rem;color:var(--accent);margin-bottom:4px}
+.mode .desc{font-size:.78rem;color:var(--sub);margin-bottom:2px}
+.mode .score{font-size:.85rem;color:#c2798d;margin-bottom:12px}
+.pattern{background:var(--chip);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px}
+.pat-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.pat-head .t{font-size:.85rem;font-weight:700;color:#c2798d}
+button.copy{background:linear-gradient(135deg,#f78fa7,#e8748f);color:#fff;font-size:.82rem;box-shadow:0 2px 6px rgba(232,116,143,.35)}
+button.copy:hover{opacity:.9}
+button.copied{background:#fde7ee !important;color:#c2566e !important}
+pre{
+  font-family:"Consolas","Courier New",monospace;font-size:.95rem;line-height:1.9;
+  background:#fffdfb;border:1px solid var(--border);color:var(--text);
+  border-radius:10px;padding:12px 14px;overflow-x:auto;white-space:pre;
+}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:.78rem;border-radius:999px;padding:3px 12px;background:rgba(255,255,255,.85);border:1px solid var(--border);color:var(--sub)}
+.chip b{color:var(--text);margin-right:4px}
+.chip.r1{background:#fff3cd;border-color:#eedc9a;color:#8a6d2f}
+.chip.r2{background:#fde7ee;border-color:#f2c6d0;color:#a34b62}
+.chip.r3{background:#f3edea;border-color:#e3d5cd;color:#8a6d5c}
+.chip.out{background:rgba(255,255,255,.6);border-color:var(--border);color:#b9a4ab}
+.chip.ng{background:#fbdde2;border-color:#eeb0bb;color:#c2566e}
+.chip.na{background:#ffedd5;border-color:#f5d0a9;color:#9a5b2d}
+.summary{font-size:.78rem;color:var(--sub);margin-top:8px}
+.summary b{color:var(--text)}
+details{margin-top:16px}
+details summary{cursor:pointer;font-size:.85rem;color:var(--sub)}
+details .muted{margin-top:8px;background:var(--chip);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:.8rem;color:var(--sub);line-height:1.8}
+details .muted b{color:var(--text)}
+footer{text-align:center;color:var(--sub);font-size:.8rem;padding:8px 16px 24px;letter-spacing:.15em}
+footer::before{content:"♡ ";color:var(--accent2)}
+footer::after{content:" ♡";color:var(--accent2)}
+@media (max-width:560px){
+  thead{display:none}
+  tbody tr{display:block;padding:10px 12px 6px;border-bottom:1px dashed var(--border)}
+  tbody tr:last-child{border-bottom:none}
+  tbody td{display:block;width:auto;padding:2px 0;border-bottom:none;white-space:normal}
+  td:last-child{margin-top:6px}
+}
+</style>
+</head>
+<body>
+<div class="bgpattern" aria-hidden="true"></div>
+<main>
+  <header>
+    <h1>管理</h1>
+    <p class="sub">あぐり ポジション希望調査</p>
+  </header>
+
+  <div class="panel adminbox" id="loginCard">
+    <p class="admintitle">🔐 管理者ログイン</p>
+    <div class="loginrow">
+      <input type="password" id="pw" placeholder="パスワード" autocomplete="current-password">
+      <button class="adminbtn primary" id="loginBtn" type="button">ログイン</button>
+    </div>
+    <p class="pwerr" id="loginErr" hidden>パスワードが違います</p>
+    <p class="adminnote">※ パスワードはconfig.jsのadminPasswordです。<br>※ 回答データはGitHubの非公開リポジトリから直接読み込みます。</p>
+  </div>
+
+  <div id="mainCard" hidden>
+    <div class="panel">
+      <p class="admintitle">回答状況 <span style="font-weight:400;font-size:.78rem;color:var(--sub)">「結果を算出」は全員の回答が揃ってから押してください</span></p>
+      <p class="pwerr" id="statusMsg" style="margin:0 0 8px" hidden></p>
+      <div class="status">
+        <span class="count" id="count">0<small> / 7 人</small></span>
+        <span id="pills"></span>
+      </div>
+      <p class="adminnote" id="warnYet" style="color:#c2566e" hidden></p>
+
+      <div class="tblwrap" style="margin-top:12px">
+        <table>
+          <thead>
+            <tr><th>名前</th><th>第1希望</th><th>第2希望</th><th>第3希望</th><th>手に入れたくない</th><th>更新日時</th><th></th></tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="toolbar">
+        <button class="adminbtn" id="refreshBtn" type="button">↻ 再読み込み</button>
+        <button class="adminbtn primary" id="computeBtn" type="button">🏁 結果を算出する</button>
+        <span style="flex:1"></span>
+        <button class="adminbtn" id="csvBtn" type="button">CSVをダウンロード</button>
+      </div>
+    </div>
+
+    <div id="results"></div>
+
+    <details>
+      <summary>判定基準(スコアリング)を表示</summary>
+      <div class="muted" id="ruleText"></div>
+    </details>
+  </div>
+</main>
+<footer>ポジション希望調査</footer>
+
+<script src="config.js"></script>
+<script src="app-common.js"></script>
+<script src="optimizer.js"></script>
+<script>
+(function () {
+  var CFG = window.WISH_CONFIG;
+  var $ = function (id) { return document.getElementById(id); };
+  var lastRows = [];
+
+  function showStatus(msg) {
+    var el = $('statusMsg');
+    if (msg) { el.textContent = msg; el.hidden = false; }
+    else { el.hidden = true; }
+  }
+
+  function login() {
+    if ($('pw').value === CFG.adminPassword) {
+      sessionStorage.setItem('wishAdminOk', '1');
+      $('loginCard').hidden = true;
+      $('mainCard').hidden = false;
+      loadData();
+    } else {
+      $('loginErr').hidden = false;
+      $('pw').value = '';
+      $('pw').focus();
+    }
+  }
+
+  function loadData() {
+    $('tbody').innerHTML = '<tr><td colspan="7" class="dim" style="padding:18px 0">読み込み中…</td></tr>';
+    window.WishCommon.fetchResponses().then(function (r) {
+      showStatus('');
+      lastRows = r.rows;
+      var byName = {};
+      r.rows.forEach(function (row) { byName[row.name] = row; });
+      var responded = CFG.participants.filter(function (p) { return byName[p]; });
+      var non = CFG.participants.filter(function (p) { return !byName[p]; });
+
+      $('count').innerHTML = responded.length + '<small> / ' + CFG.participants.length + ' 人</small>';
+      var pills = '';
+      responded.forEach(function (p) { pills += '<span class="pill ok">' + p + ' ✔</span> '; });
+      non.forEach(function (p) { pills += '<span class="pill yet">' + p + ' 未回答</span> '; });
+      $('pills').innerHTML = pills;
+
+      var warn = $('warnYet');
+      if (non.length) {
+        warn.hidden = false;
+        warn.textContent = '⚠ 未回答:' + non.join('・') + '(このまま算出すると、未回答者には残りの選択肢が自動割当されます)';
+      } else { warn.hidden = true; }
+
+      if (responded.length) {
+        $('tbody').innerHTML = responded.map(function (p) {
+          var r2 = byName[p];
+          return '<tr><td class="n">' + r2.name + '</td><td>' + r2.w1 + '</td><td>' + r2.w2 + '</td><td>' + r2.w3 +
+            '</td><td class="bad">' + r2.bad + '</td><td class="dim">' + (r2.updatedAt || '') +
+            '</td><td><button class="danger" data-del="' + r2.name + '" type="button">削除</button></td></tr>';
+        }).join('');
+        Array.prototype.forEach.call(document.querySelectorAll('[data-del]'), function (btn) {
+          btn.addEventListener('click', function () {
+            if (!confirm(btn.getAttribute('data-del') + ' さんの回答を削除しますか?')) return;
+            deleteRow(btn.getAttribute('data-del'));
+          });
+        });
+      } else {
+        $('tbody').innerHTML = '<tr><td colspan="7" class="dim" style="padding:18px 0">まだ回答がありません</td></tr>';
+      }
+    }).catch(function (e) {
+      $('tbody').innerHTML = '<tr><td colspan="7" class="dim" style="padding:18px 0">読み込みに失敗しました</td></tr>';
+      showStatus('⚠ 読み込みに失敗しました:' + (e && e.message ? e.message : e));
+    });
+  }
+
+  function deleteRow(name) {
+    // 削除も「読み出し→行削除→書き戻し」。競合時は自動再試行
+    window.WishCommon.fetchResponses().then(function (cur) {
+      var next = cur.rows.filter(function (r) { return r.name !== name; });
+      if (next.length === cur.rows.length) return loadData(); // 対象が無ければ何もしない
+      var text = buildCsv(next);
+      return putRows(text, cur.sha, '回答を削除: ' + name).then(loadData);
+    }).catch(function (e) { showStatus('⚠ 削除に失敗しました:' + (e && e.message ? e.message : e)); });
+  }
+
+  function buildCsv(rows) {
+    var sorted = rows.slice().sort(function (a, b) {
+      return CFG.participants.indexOf(a.name) - CFG.participants.indexOf(b.name);
+    });
+    var lines = ['name,w1,w2,w3,bad,updated_at'];
+    sorted.forEach(function (r) { lines.push([r.name, r.w1, r.w2, r.w3, r.bad, r.updatedAt].join(',')); });
+    return lines.join('\n') + '\n';
+  }
+  function b64encode(str) {
+    var bytes = new TextEncoder().encode(str);
+    var bin = ''; for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+  function putRows(text, sha, message, attempt) {
+    attempt = attempt || 0;
+    var body = { message: message, content: b64encode(text), branch: CFG.branch };
+    if (sha) body.sha = sha;
+    return fetch('https://api.github.com/repos/' + CFG.dataRepo + '/contents/' + encodeURIComponent(CFG.dataFile) + '?t=' + Date.now(), {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + CFG.token,
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    }).then(function (res) {
+      if (res.ok) return { ok: true };
+      if (res.status === 409 && attempt < 5) {
+        return window.WishCommon.fetchResponses().then(function (cur) {
+          return putRows(text, cur.sha, message, attempt + 1);
+        });
+      }
+      throw new Error('GitHubへの保存に失敗しました(HTTP ' + res.status + ')');
+    });
+  }
+
+  function compute() {
+    $('computeBtn').disabled = true;
+    $('computeBtn').textContent = '計算中…';
+    window.WishCommon.fetchResponses().then(function (r) {
+      var data = {};
+      r.rows.forEach(function (row) {
+        if (CFG.participants.indexOf(row.name) >= 0) data[row.name] = row;
+      });
+      return window.WishOptimizer.computeResults(CFG, data);
+    }).then(renderResults)
+      .catch(function (e) { showStatus('⚠ 計算に失敗しました:' + (e && e.message ? e.message : e)); })
+      .finally(function () {
+        $('computeBtn').disabled = false;
+        $('computeBtn').textContent = '🏁 結果を算出する';
+      });
+  }
+
+  function chipClass(label) {
+    if (label.indexOf('第1希望') === 0) return 'r1';
+    if (label.indexOf('第2希望') === 0) return 'r2';
+    if (label.indexOf('第3希望') === 0) return 'r3';
+    if (label.indexOf('NG') === 0) return 'ng';
+    if (label.indexOf('未回答') === 0) return 'na';
+    return 'out';
+  }
+
+  function renderPattern(pat, idx) {
+    var chips = pat.assignment.map(function (m) {
+      return '<span class="chip ' + chipClass(m.label) + '"><b>' + m.person + '</b>' + m.option + '(' + m.label + ')</span>';
+    }).join('');
+    var s = pat.summary;
+    var sum = '<b>' + s['第1希望'] + '</b>人が第1希望 / <b>' + s['第2希望'] + '</b>人が第2希望 / <b>' + s['第3希望'] +
+      '</b>人が第3希望 / <b>' + s['希望圏外'] + '</b>人が圏外' +
+      (s['NG'] ? ' / <b style="color:#c2566e">' + s['NG'] + '人がNG</b>' : '') +
+      (s['未回答'] ? ' / <b style="color:#9a5b2d">' + s['未回答'] + '人が未回答(自動割当)</b>' : '');
+    return '<div class="pattern">' +
+      '<div class="pat-head"><span class="t">パターン ' + idx + '</span>' +
+      '<button class="copy" data-copy type="button">📋 コピー</button></div>' +
+      '<pre></pre><div class="chips">' + chips + '</div><div class="summary">' + sum + '</div></div>';
+  }
+
+  function renderResults(res) {
+    var shown = [];
+    var html = '';
+    res.modes.forEach(function (mode) {
+      html += '<div class="mode"><h2>' + mode.name + '</h2><div class="desc">' + mode.description + '</div>' +
+        '<div class="score">合計スコア:' + mode.score.toLocaleString() +
+        (mode.tieCount > 1 ? '(同点トップ ' + mode.tieCount.toLocaleString() + ' パターンあり。うち上位 ' +
+          Math.min(10, mode.patterns.length) + ' を表示)' : '(唯一の最適解)') + '</div>';
+      mode.patterns.slice(0, 10).forEach(function (pat, i) {
+        html += renderPattern(pat, i + 1);
+        shown.push(pat.lines);
+      });
+      html += '</div>';
+    });
+    $('results').innerHTML = html;
+    Array.prototype.forEach.call(document.querySelectorAll('.pattern pre'), function (pre, i) {
+      pre.textContent = shown[i];
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.pattern'), function (el) {
+      var btn = el.querySelector('[data-copy]');
+      var text = el.querySelector('pre').textContent;
+      btn.addEventListener('click', function () { copyText(text, btn); });
+    });
+    $('results').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function copyText(text, btn) {
+    var done = function () {
+      var old = btn.textContent;
+      btn.textContent = '✅ コピーしました';
+      btn.classList.add('copied');
+      setTimeout(function () { btn.textContent = old; btn.classList.remove('copied'); }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text, done); });
+    } else { fallbackCopy(text, done); }
+  }
+  function fallbackCopy(text, done) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) { showStatus('⚠ コピーに失敗しました。テキストを選択して手動でコピーしてください。'); }
+    document.body.removeChild(ta);
+  }
+
+  function downloadCsv() {
+    if (!lastRows.length) { showStatus('⚠ ダウンロードできる回答がありません。'); return; }
+    var text = buildCsv(lastRows);
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], { type: 'text/csv' }));
+    a.download = 'responses.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  $('ruleText').innerHTML =
+    '・第1希望 = <b>+' + CFG.w1Score + '点</b> / 第2希望 = <b>+' + CFG.w2Score + '点</b> / 第3希望 = <b>+' + CFG.w3Score + '点</b> / 希望圏外 = <b>0点</b><br>' +
+    '・「手に入れたくないもの」が割り当たった場合 <b>-' + CFG.badPenalty.toLocaleString() + '点</b>(事実上の絶対回避)<br>' +
+    '・9つの選択肢から7人への割当て全パターン(181,440通り)を列挙し、合計スコアが最大のものを最適解とします。<br>' +
+    '・優先度高モードでは、優先メンバー(' + CFG.priorityMembers.join('・') + ')のスコアを<b>' + CFG.priorityWeight + '倍</b>で評価します。<br>' +
+    '・同一スコアの割当てが複数ある場合は、それらすべてを同点トップとして表示します。<br>' +
+    '・未回答者がいる場合は、回答者だけで最適化し、未回答者には残りの選択肢を参加者順に自動割当します。';
+
+  $('loginBtn').addEventListener('click', login);
+  $('pw').addEventListener('keydown', function (e) { if (e.key === 'Enter') login(); });
+  $('refreshBtn').addEventListener('click', loadData);
+  $('computeBtn').addEventListener('click', compute);
+  $('csvBtn').addEventListener('click', downloadCsv);
+
+  if (sessionStorage.getItem('wishAdminOk') === '1') {
+    $('loginCard').hidden = true;
+    $('mainCard').hidden = false;
+    loadData();
+  }
+})();
+</script>
+</body>
+</html>
